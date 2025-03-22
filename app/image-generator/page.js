@@ -25,7 +25,7 @@ export default function ImgGen() {
     return (
         <>
             <CurrentFileIndicator filePath="/app/image-generator/page.js" />
-            <PageHeader title="AI Image Generator" icon={faImage} />
+            <PageHeader title="AI 圖像產生器" icon={faImage} />
             <section>
                 <div className="container mx-auto">
                     <form onSubmit={submitHandler}>
