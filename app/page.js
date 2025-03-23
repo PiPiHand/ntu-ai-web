@@ -27,7 +27,9 @@ export default function Home() {
     axios.get('/api/vocab-ai')
       .then(response => {
         console.log("成功獲取歷史資料:", response.data);
-        setVocabList(response.data);  // 直接使用後端排序好的資料
+        // 將資料按照時間戳記排序（新的在前）
+        const sortedList = response.data.sort((a, b) => b.createdAt - a.createdAt);
+        setVocabList(sortedList);
       })
       .catch(error => {
         console.error("獲取歷史資料失敗:", error);
@@ -42,13 +44,13 @@ export default function Home() {
     e.preventDefault();
     console.log("User Input: ", userInput);
     console.log("Language: ", language);
-    // 作為準備傳遞給後端的資料 -> {} 物件 常用於傳地給後端資料的格式
+   // 作為準備傳遞給後端的資料 -> {} 物件 常用於傳地給後端資料的格式
     const body = { userInput, language };
     console.log("body:", body);
+    // TODO: 將body POST到 /api/vocab-ai { userInput: "", language: "" }
+    // 透過axious將body post 到 /api/vocab-ai
+    // 屏使用then 以及 catch 的方式分別印出後端的回應
 
-    // 立即清空輸入框
-    setUserInput("");
-    
     setIsWaiting(true);
     axios.post('/api/vocab-ai', body)
       // 成功接收後端回應
