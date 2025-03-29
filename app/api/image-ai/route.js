@@ -53,7 +53,7 @@ export async function POST(req) {
     }
 
     // 將圖片生成結果加入到firestore的image-ai集合中
-    await db.collection("image-ai").add(data);
+    db.collection("image-ai").add(data);
 
     //console.log("route data:", data);
 
