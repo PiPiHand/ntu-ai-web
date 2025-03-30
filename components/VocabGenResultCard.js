@@ -1,11 +1,24 @@
 import moment from 'moment';
+import { faCommentDots, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function VocabGenResultCard({ result }) {
     const { wordList, zhWordList } = result.payload;
     const wordItems = wordList.map((word, idx) => {
         return (
+            // 這是一個單字卡
             <div className="p-3 border-2 border-slate-300 rounded-md" key={idx}>
-                <h3 className="text-lg font-bold text-slate-700">{word}</h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-700">{word}</h3>
+                    <div className="flex gap-2">
+                        <button className="w-8 h-8 flex items-center justify-center hover:bg-orange-100 rounded-md transition-colors">
+                            <FontAwesomeIcon icon={faCommentDots} className="text-orange-500" />
+                        </button>
+                        <button className="w-8 h-8 flex items-center justify-center hover:bg-orange-100 rounded-md transition-colors">
+                            <FontAwesomeIcon icon={faCopy} className="text-orange-500" />
+                        </button>
+                    </div>
+                </div>
                 <p className="text-slate-400 mt-3">{zhWordList[idx]}</p>
             </div>
         )
@@ -15,7 +28,7 @@ export default function VocabGenResultCard({ result }) {
             <h3 className="text-lg">
                 {result.title} <span className="py-2 px-4 bg-slate-200 font-semibold rounded-lg inline-block ml-2">{result.language}</span>
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-3">
                 {wordItems}
             </div>
             <p className="mt-3 text-right text-slate-500">
