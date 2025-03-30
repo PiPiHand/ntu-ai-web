@@ -53,3 +53,31 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/PiPiHand/ntu-ai-web.git
 git push -u origin main
+
+## 檢視目前所在非之相關資訊
+
+git status
+
+## 切換分支
+
+git checkout
+
+## 切換到 main 分支
+
+git ch3ckout main
+
+## 切換到 feature/add-firebase 分支 e.g. git checkout feature/add-tts-widget-ui
+
+git checkout feature/add-firebase
+
+## 想要新增分支 e.g. git checkout -b feature/add-tts-widget-ui。＊分支名稱不能有空格
+
+git checkout -b
+
+## 列出所有分支
+
+git branch a
+
+## 當工作成果完成後把分支推到 github
+
+git push origin HEAD (HEAD 代表目前的 feature branch
