@@ -2,8 +2,14 @@ import moment from 'moment';
 import { faCommentDots, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function VocabGenResultCard({ result }) {
+export default function VocabGenResultCard({ result, setUserInput, onCopySuccess }) {
     const { wordList, zhWordList } = result.payload;
+    
+    const handleCopy = (zhWord) => {
+        setUserInput(zhWord);
+        onCopySuccess(zhWord);
+    };
+
     const wordItems = wordList.map((word, idx) => {
         return (
             // 這是一個單字卡
@@ -14,7 +20,11 @@ export default function VocabGenResultCard({ result }) {
                         <button className="w-8 h-8 flex items-center justify-center hover:bg-orange-100 rounded-md transition-colors">
                             <FontAwesomeIcon icon={faCommentDots} className="text-orange-500" />
                         </button>
-                        <button className="w-8 h-8 flex items-center justify-center hover:bg-orange-100 rounded-md transition-colors">
+                        <button 
+                            onClick={() => handleCopy(zhWordList[idx])}
+                            className="w-8 h-8 flex items-center justify-center hover:bg-orange-100 rounded-md transition-colors"
+                            title="複製到輸入框"
+                        >
                             <FontAwesomeIcon icon={faCopy} className="text-orange-500" />
                         </button>
                     </div>
