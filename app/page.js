@@ -16,6 +16,8 @@ export default function Home() {
   const [vocabList, setVocabList] = useState([]);
   // 是否在等待回應
   const [isWaiting, setIsWaiting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const languageList = ["English", "Japanese", "Korean", "Spanish", "French", "German", "Italia", "Norwegian", "Arabic"];
 
@@ -67,10 +69,25 @@ export default function Home() {
       });
   }
 
+  const handleCopySuccess = (word) => {
+    setToastMessage(`已複製 "${word}" 到輸入框`);
+    setShowToast(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
+  };
+
   return (
     <>
       <CurrentFileIndicator filePath="/app/page.js" />
       <PageHeader title="AI單字卡產生器" icon={faEarthAmericas} />
+      {/* Toast Alert */}
+      <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 ${showToast ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white px-6 py-3 rounded-lg shadow-lg">
+          {toastMessage}
+        </div>
+      </div>
       <section>
         <div className="container mx-auto">
           <form onSubmit={submitHandler}>
@@ -114,6 +131,8 @@ export default function Home() {
             <VocabGenResultCard
               key={result.createdAt + index}
               result={result}
+              setUserInput={setUserInput}
+              onCopySuccess={handleCopySuccess}
             />
           ))}
         </div>
