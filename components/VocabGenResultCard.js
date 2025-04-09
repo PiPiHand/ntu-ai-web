@@ -1,13 +1,15 @@
 import moment from 'moment';
 import { useState } from 'react';
 import axios from 'axios';
-import { faCommentDots, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faCommentDots, faCopy, faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function VocabGenResultCard({ result, setUserInput, onCopySuccess }) {
     const { wordList, zhWordList } = result.payload;
     const [sentences, setSentences] = useState({});
     const [loadingSentence, setLoadingSentence] = useState({});
+    const [loadingSpeak, setLoadingSpeak] = useState({});
+    const [speaking, setSpeaking] = useState({});
 
     const handleCopy = (zhWord) => {
         setUserInput(zhWord);
@@ -33,6 +35,31 @@ export default function VocabGenResultCard({ result, setUserInput, onCopySuccess
             console.error('Error generating sentence:', error);
         }
         setLoadingSentence(prev => ({ ...prev, [idx]: false }));
+    };
+
+    const handleSpeak = async (sentence, idx) => {
+        setLoadingSpeak(prev => ({ ...prev, [idx]: true }));
+        try {
+            const response = await axios.post('/api/tts-ai', {
+                text: sentence,
+                language: result.language
+            });
+            
+            // 將base64轉換為音訊並播放
+            const audio = new Audio(`data:audio/mp3;base64,${response.data.audioContent}`);
+            
+            // 設置音訊結束事件
+            audio.onended = () => {
+                setSpeaking(prev => ({ ...prev, [idx]: false }));
+            };
+
+            // 開始播放並設置播放狀態
+            await audio.play();
+            setSpeaking(prev => ({ ...prev, [idx]: true }));
+        } catch (error) {
+            console.error('Error playing audio:', error);
+        }
+        setLoadingSpeak(prev => ({ ...prev, [idx]: false }));
     };
 
     const wordItems = wordList.map((word, idx) => {
@@ -65,8 +92,40 @@ export default function VocabGenResultCard({ result, setUserInput, onCopySuccess
                 <p className="text-slate-400 mt-3">{zhWordList[idx]}</p>
                 {sentences[idx] && (
                     <div className="mt-4 p-3 bg-orange-50 rounded-lg">
-                        <p className="text-orange-700">{sentences[idx].sentence}</p>
-                        <p className="text-orange-500 mt-2">{sentences[idx].translation}</p>
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <p className={`text-orange-700 ${speaking[idx] ? 'bg-orange-100 rounded px-2 py-1 transition-colors' : ''}`}>
+                                    {sentences[idx].sentence}
+                                </p>
+                                <p className="text-orange-500 mt-2">{sentences[idx].translation}</p>
+                            </div>
+                            <div className="relative">
+                                <button 
+                                    onClick={() => handleSpeak(sentences[idx].sentence, idx)}
+                                    className={`
+                                        ml-3 w-8 h-8 flex items-center justify-center 
+                                        hover:bg-orange-200 rounded-md transition-all
+                                        ${speaking[idx] ? 'bg-orange-200 scale-110' : ''}
+                                        ${loadingSpeak[idx] ? 'animate-pulse' : ''}
+                                    `}
+                                    title="播放例句發音"
+                                    disabled={loadingSpeak[idx]}
+                                >
+                                    <FontAwesomeIcon 
+                                        icon={faVolumeHigh} 
+                                        className={`
+                                            text-orange-500
+                                            ${speaking[idx] ? 'animate-[bounce_1s_ease-in-out_infinite]' : ''}
+                                        `}
+                                    />
+                                </button>
+                                {speaking[idx] && (
+                                    <div className="absolute inset-0 animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]">
+                                        <div className="absolute inset-0 rounded-md bg-orange-400 opacity-20"></div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
